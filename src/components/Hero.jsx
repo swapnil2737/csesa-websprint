@@ -1,25 +1,11 @@
 import { useEffect, useState } from "react";
 
-const COUNTDOWN = { days: 3, hours: 14, minutes: 27, seconds: 45 };
-
 export default function HeroSection() {
-  const [time, setTime] = useState(COUNTDOWN);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 150);
-    const interval = setInterval(() => {
-      setTime((prev) => {
-        let { days, hours, minutes, seconds } = prev;
-        seconds--;
-        if (seconds < 0) { seconds = 59; minutes--; }
-        if (minutes < 0) { minutes = 59; hours--; }
-        if (hours < 0) { hours = 23; days--; }
-        if (days < 0) return prev;
-        return { days, hours, minutes, seconds };
-      });
-    }, 1000);
-    return () => { clearTimeout(t); clearInterval(interval); };
+    return () => clearTimeout(t);
   }, []);
 
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -46,14 +32,14 @@ export default function HeroSection() {
         style={{ background: "radial-gradient(ellipse 80% 60% at 50% 40%, rgba(220,38,38,0.13) 0%, transparent 70%)" }}
       />
 
-      {/* Decorative rotating shapes */}
+      {/* Decorative shapes */}
       <div className="absolute top-24 left-6 sm:left-10 w-24 sm:w-32 h-24 sm:h-32 border border-red-800/25 rotate-45 pointer-events-none" style={{ animation: "spin 22s linear infinite" }} />
       <div className="absolute bottom-24 right-8 sm:right-16 w-16 sm:w-20 h-16 sm:h-20 border border-cyan-800/20 rotate-12 pointer-events-none" style={{ animation: "spin 16s linear infinite reverse" }} />
-      <div className="absolute top-1/3 right-12 sm:right-20 w-3 h-3 bg-red-500 rotate-45 pointer-events-none" style={{ animation: "bounce 2s infinite" }} />
-      <div className="absolute bottom-1/3 left-12 sm:left-20 w-2 h-2 bg-cyan-400 rounded-full pointer-events-none" style={{ animation: "pulse 2s infinite" }} />
+      <div className="absolute top-1/3 right-12 sm:right-20 w-3 h-3 bg-red-500 rotate-45 pointer-events-none" style={{ animation: "pulse 2s infinite" }} />
+      <div className="absolute bottom-1/3 left-12 sm:left-20 w-2 h-2 bg-cyan-400 rounded-full pointer-events-none" style={{ animation: "pulse 2.5s infinite" }} />
 
-      {/* Content — pt-28 ensures content clears the fixed navbar on all screen sizes */}
-      <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto w-full pt-28 pb-16">
+      {/* Content */}
+      <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto w-full pt-28 pb-20">
 
         {/* Season badge */}
         <div
@@ -63,7 +49,7 @@ export default function HeroSection() {
           <span className="text-red-400 text-xs font-bold uppercase tracking-widest">Season 01 — Now Recruiting</span>
         </div>
 
-        {/* Main title */}
+        {/* Title */}
         <h1
           className={`font-black uppercase leading-none mb-4 sm:mb-6 transition-all duration-700 delay-200 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
           style={{ fontFamily: "'Bebas Neue', Impact, sans-serif" }}
@@ -90,24 +76,6 @@ export default function HeroSection() {
           claim the prize.{" "}
           <span className="text-red-400 font-semibold">Only the strongest advance.</span>
         </p>
-
-        {/* Countdown */}
-        <div
-          className={`flex items-center justify-center gap-2 sm:gap-4 md:gap-6 mb-10 sm:mb-12 transition-all duration-700 delay-400 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-        >
-          {Object.entries(time).map(([label, val]) => (
-            <div key={label} className="flex flex-col items-center">
-              <div className="bg-black border border-red-800 w-14 h-14 sm:w-18 sm:h-18 md:w-20 md:h-20 flex items-center justify-center relative overflow-hidden"
-                style={{ width: "clamp(3.2rem, 8vw, 5rem)", height: "clamp(3.2rem, 8vw, 5rem)" }}>
-                <div className="absolute inset-0 bg-red-950/20" />
-                <span className="relative text-2xl sm:text-3xl font-black text-white tabular-nums">
-                  {String(val).padStart(2, "0")}
-                </span>
-              </div>
-              <span className="text-red-600 text-xs uppercase tracking-widest mt-1.5 font-bold">{label}</span>
-            </div>
-          ))}
-        </div>
 
         {/* CTAs */}
         <div
@@ -140,16 +108,23 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style={{ animation: "bounce 2s infinite" }}>
-        <span className="text-gray-700 text-xs uppercase tracking-widest">Scroll</span>
+      {/* Scroll indicator — uses custom keyframe so it actually bounces */}
+      <div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none"
+        style={{ animation: "scrollBounce 2s ease-in-out infinite" }}
+      >
+        <span className="text-gray-600 text-xs uppercase tracking-widest">Scroll</span>
         <div className="w-px h-6 bg-gradient-to-b from-red-600 to-transparent" />
       </div>
 
       <style>{`
         @keyframes gridMove {
-          0% { background-position: 0 0; }
+          0%   { background-position: 0 0; }
           100% { background-position: 60px 60px; }
+        }
+        @keyframes scrollBounce {
+          0%, 100% { transform: translateX(-50%) translateY(0px); opacity: 1; }
+          50%       { transform: translateX(-50%) translateY(10px); opacity: 0.5; }
         }
       `}</style>
     </section>
